@@ -1,0 +1,13 @@
+/var/log/wireguard-connections.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 0640 root adm # Or a specific group if needed
+    sharedscripts
+    postrotate
+        systemctl kill -s HUP syslog-ng > /dev/null 2>&1 || true # Example for syslog-ng, adjust if using rsyslog or journald primarily
+    endscript
+}
