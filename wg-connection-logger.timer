@@ -1,0 +1,10 @@
+[Unit]
+Description=Run WireGuard Connection Logger periodically
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min # Run every 1 minute
+Unit=wg-connection-logger.service
+
+[Install]
+WantedBy=timers.target
