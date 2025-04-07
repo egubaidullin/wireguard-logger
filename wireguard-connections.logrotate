@@ -1,0 +1,21 @@
+# Logrotate configuration for WireGuard Connection Logger
+
+/var/log/wireguard-connections.log {
+    weekly                 # Rotate logs weekly
+    missingok              # Don't error if the log file is missing
+    rotate 7               # Keep 7 weeks of old log files
+    compress               # Compress rotated logs (usually with gzip)
+    delaycompress          # Delay compression of the log file until the next rotation cycle
+    notifempty             # Do not rotate the log file if it is empty
+    create 0640 root adm   # Create new log files with mode 640, owner root, group adm
+    sharedscripts          # Run postrotate script only once, even if multiple logs match the pattern
+    postrotate
+        # Send SIGHUP signal to the syslog daemon to make it reload its config/reopen log files.
+        # Adjust the service name if you use syslog-ng instead of rsyslog.
+        # The '|| true' prevents errors if the service isn't running or found.
+        # This is often not strictly necessary when logging directly or using systemd-journald,
+        # but it's common practice for traditional syslog daemons.
+        systemctl kill -s HUP rsyslog.service >/dev/null 2>&1 || true
+        # systemctl kill -s HUP syslog-ng.service >/dev/null 2>&1 || true
+    endscript
+}
